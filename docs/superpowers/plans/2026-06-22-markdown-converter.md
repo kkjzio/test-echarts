@@ -6,7 +6,7 @@
 
 **Architecture:** Single-page app with resizable left/right panels. Left panel holds a textarea editor and toolbar; right panel renders CommonMark with `react-markdown`, using a custom `code` component to detect `echarts` language and render an ECharts instance. State lives in `App` and is passed down through props.
 
-**Tech Stack:** Vite 6, React 18, TypeScript 5, Tailwind CSS 4, `react-markdown`, `echarts` 5, `react-resizable-panels`, Vitest, `@testing-library/react`, `jsdom`.
+**Tech Stack:** Vite 6+, React 18+, TypeScript 5+, Tailwind CSS 4, `react-markdown`, `echarts` 5, `react-resizable-panels`, Vitest, `@testing-library/react`, `jsdom`.
 
 ---
 

@@ -15,7 +15,7 @@
 ## 技术栈
 
 - **构建工具**：Vite（React + TypeScript 模板）
-- **UI 框架**：React 18 + Tailwind CSS
+- **UI 框架**：React 18+ + Tailwind CSS
 - **Markdown 渲染**：`react-markdown`（CommonMark）
 - **图表**：`echarts` 5.x
 - **分栏布局**：`react-resizable-panels`
