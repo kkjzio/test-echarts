@@ -1,0 +1,18 @@
+{
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm create vite@latest *)",
+      "Bash(npm install)",
+      "Bash(npm install *)",
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run test)",
+      "Bash(npx tailwindcss *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
