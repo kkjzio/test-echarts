@@ -29,4 +29,35 @@ describe('EChartsBlock', () => {
     expect(screen.getByText(/JSON 格式错误/)).toBeInTheDocument();
     expect(mockSetOption).not.toHaveBeenCalled();
   });
+
+  it('calls dispose on unmount', () => {
+    const { unmount } = render(<EChartsBlock code='{"title":{"text":"test"}}' />);
+    expect(mockDispose).not.toHaveBeenCalled();
+    unmount();
+    expect(mockDispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('disposes previous chart when code changes from valid to invalid', () => {
+    const { rerender } = render(<EChartsBlock code='{"title":{"text":"test"}}' />);
+    expect(mockDispose).not.toHaveBeenCalled();
+    rerender(<EChartsBlock code='not valid json' />);
+    expect(mockDispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows error message when setOption throws and disposes chart on unmount', () => {
+    mockSetOption.mockImplementationOnce(() => {
+      throw new Error('invalid option');
+    });
+    const { unmount } = render(<EChartsBlock code='{"title":{"text":"test"}}' />);
+    expect(screen.getByText(/invalid option/)).toBeInTheDocument();
+    unmount();
+    expect(mockDispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('resizes chart on window resize', () => {
+    render(<EChartsBlock code='{"title":{"text":"test"}}' />);
+    expect(mockResize).not.toHaveBeenCalled();
+    window.dispatchEvent(new Event('resize'));
+    expect(mockResize).toHaveBeenCalledTimes(1);
+  });
 });

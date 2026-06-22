@@ -7,55 +7,56 @@ interface EChartsBlockProps {
 
 export function EChartsBlock({ code }: EChartsBlockProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<echarts.ECharts | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let chart: echarts.ECharts | null = null;
+
+    const cleanup = () => {
+      if (chart) {
+        chart.dispose();
+        chart = null;
+      }
+    };
+
     let parsedOption: echarts.EChartsCoreOption;
     try {
       parsedOption = JSON.parse(code) as echarts.EChartsCoreOption;
+      setError(null);
     } catch {
       setError('配置 JSON 格式错误');
-      return;
+      return cleanup;
     }
 
     if (!containerRef.current) {
-      return;
+      return cleanup;
     }
 
     try {
-      const chart = echarts.init(containerRef.current);
-      chartRef.current = chart;
+      chart = echarts.init(containerRef.current);
       chart.setOption(parsedOption);
-      setError(null);
 
-      const handleResize = () => {
-        chart.resize();
-      };
+      const handleResize = () => chart?.resize();
       window.addEventListener('resize', handleResize);
 
       return () => {
         window.removeEventListener('resize', handleResize);
-        chart.dispose();
-        chartRef.current = null;
+        cleanup();
       };
     } catch (err) {
       const message = err instanceof Error ? err.message : 'ECharts 初始化失败';
       setError(message);
-      if (chartRef.current) {
-        chartRef.current.dispose();
-        chartRef.current = null;
-      }
+      return cleanup;
     }
   }, [code]);
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded text-red-600">
+      <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
         {error}
       </div>
     );
   }
 
-  return <div ref={containerRef} className="w-full h-64" />;
+  return <div ref={containerRef} className="h-64 w-full" />;
 }
