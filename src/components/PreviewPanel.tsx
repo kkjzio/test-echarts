@@ -1,8 +1,23 @@
+import { isValidElement, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { EChartsBlock } from './EChartsBlock';
 
 interface PreviewPanelProps {
   content: string;
+}
+
+function extractCodeFromPreChildren(children: ReactNode): string | null {
+  if (!isValidElement(children)) {
+    return null;
+  }
+
+  const child = children as { props?: { className?: string; children?: ReactNode } };
+  const className = child.props?.className ?? '';
+  if (className.includes('language-echarts')) {
+    return String(child.props?.children ?? '').replace(/\n$/, '');
+  }
+
+  return null;
 }
 
 export function PreviewPanel({ content }: PreviewPanelProps) {
@@ -19,20 +34,15 @@ export function PreviewPanel({ content }: PreviewPanelProps) {
       <article className="prose prose-slate max-w-none">
         <ReactMarkdown
           components={{
-            code(props) {
-              const { className, children } = props;
-              const lang = className?.replace('language-', '');
-              const code = String(children).replace(/\n$/, '');
-
-              if (lang === 'echarts') {
-                return <EChartsBlock code={code} />;
+            pre({ children }) {
+              const echartsCode = extractCodeFromPreChildren(children);
+              if (echartsCode !== null) {
+                return <EChartsBlock code={echartsCode} />;
               }
-
-              return (
-                <pre className="rounded bg-gray-100 p-3">
-                  <code className={className}>{children}</code>
-                </pre>
-              );
+              return <pre className="rounded bg-gray-100 p-3">{children}</pre>;
+            },
+            code({ className, children }) {
+              return <code className={className}>{children}</code>;
             },
           }}
         >
