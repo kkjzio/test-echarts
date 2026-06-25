@@ -9,11 +9,14 @@ interface ResizablePanelsProps {
 export function ResizablePanels({ left, right }: ResizablePanelsProps) {
   return (
     <Group orientation="horizontal" className="h-full w-full">
-      <Panel defaultSize={50} minSize={20}>
+      <Panel id="left-panel" defaultSize={50} minSize={20}>
         {left}
       </Panel>
-      <Separator className="w-1 bg-gray-200 transition-colors hover:bg-blue-400" />
-      <Panel defaultSize={50} minSize={20}>
+      <Separator
+        id="resize-separator"
+        className="w-1 bg-gray-200 transition-colors hover:bg-blue-400"
+      />
+      <Panel id="right-panel" defaultSize={50} minSize={20}>
         {right}
       </Panel>
     </Group>
