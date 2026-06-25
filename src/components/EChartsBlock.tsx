@@ -11,8 +11,20 @@ export function EChartsBlock({ code }: EChartsBlockProps) {
 
   useEffect(() => {
     let chart: echarts.ECharts | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+    let rafId: number | null = null;
 
     const cleanup = () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+      }
+
       if (chart) {
         chart.dispose();
         chart = null;
@@ -35,6 +47,18 @@ export function EChartsBlock({ code }: EChartsBlockProps) {
     try {
       chart = echarts.init(containerRef.current);
       chart.setOption(parsedOption);
+
+      // Ensure chart gets a resize after initial layout settles.
+      rafId = requestAnimationFrame(() => {
+        chart?.resize();
+      });
+
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(() => {
+          chart?.resize();
+        });
+        resizeObserver.observe(containerRef.current);
+      }
 
       const handleResize = () => chart?.resize();
       window.addEventListener('resize', handleResize);
