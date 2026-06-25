@@ -39,10 +39,11 @@ export function PreviewPanel({ content }: PreviewPanelProps) {
               if (echartsCode !== null) {
                 return <EChartsBlock code={echartsCode} />;
               }
-              return <pre className="rounded bg-gray-100 p-3">{children}</pre>;
+              return <pre className="rounded bg-gray-100 p-3 text-black">{children}</pre>;
             },
             code({ className, children }) {
-              return <code className={className}>{children}</code>;
+              const mergedClassName = className ? `${className} text-black` : 'text-black';
+              return <code className={mergedClassName}>{children}</code>;
             },
           }}
         >

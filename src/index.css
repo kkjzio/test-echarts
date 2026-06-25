@@ -1,2 +1,15 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+@layer components {
+	.prose pre,
+	.prose pre code {
+		color: #000;
+	}
+
+	.prose-slate pre,
+	.prose-slate pre code,
+	.prose-slate code {
+		color: #000;
+	}
+}
