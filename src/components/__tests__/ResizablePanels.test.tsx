@@ -4,8 +4,8 @@ import { ResizablePanels } from '../ResizablePanels';
 
 vi.mock('react-resizable-panels', () => ({
   Panel: ({ children }: { children: React.ReactNode }) => <div data-testid="panel">{children}</div>,
-  PanelGroup: ({ children }: { children: React.ReactNode }) => <div data-testid="panel-group">{children}</div>,
-  PanelResizeHandle: () => <div data-testid="resize-handle" />,
+  Group: ({ children }: { children: React.ReactNode }) => <div data-testid="panel-group">{children}</div>,
+  Separator: () => <div data-testid="resize-handle" />,
 }));
 
 describe('ResizablePanels', () => {
