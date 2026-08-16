@@ -1,23 +1,24 @@
-import { isValidElement, type ReactNode } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { Streamdown, Block, type BlockProps } from 'streamdown';
 import { EChartsBlock } from './EChartsBlock';
 
 interface PreviewPanelProps {
   content: string;
 }
 
-function extractCodeFromPreChildren(children: ReactNode): string | null {
-  if (!isValidElement(children)) {
-    return null;
+// Matches a block that is exactly one ```echarts fence and captures the JSON body.
+const ECHARTS_BLOCK_RE = /^```echarts\s*\n?([\s\S]*?)\n?```\s*$/;
+
+function MarkdownBlock(props: BlockProps) {
+  if (props.isIncomplete) {
+    return <Block {...props} />;
   }
 
-  const child = children as { props?: { className?: string; children?: ReactNode } };
-  const className = child.props?.className ?? '';
-  if (className.includes('language-echarts')) {
-    return String(child.props?.children ?? '').replace(/\n$/, '');
+  const match = ECHARTS_BLOCK_RE.exec(props.content.trim());
+  if (match) {
+    return <EChartsBlock code={match[1].trim()} />;
   }
 
-  return null;
+  return <Block {...props} />;
 }
 
 export function PreviewPanel({ content }: PreviewPanelProps) {
@@ -32,23 +33,7 @@ export function PreviewPanel({ content }: PreviewPanelProps) {
   return (
     <div className="h-full overflow-auto bg-white p-6">
       <article className="prose prose-slate max-w-none">
-        <ReactMarkdown
-          components={{
-            pre({ children }) {
-              const echartsCode = extractCodeFromPreChildren(children);
-              if (echartsCode !== null) {
-                return <EChartsBlock code={echartsCode} />;
-              }
-              return <pre className="rounded bg-gray-100 p-3 text-black">{children}</pre>;
-            },
-            code({ className, children }) {
-              const mergedClassName = className ? `${className} text-black` : 'text-black';
-              return <code className={mergedClassName}>{children}</code>;
-            },
-          }}
-        >
-          {content}
-        </ReactMarkdown>
+        <Streamdown BlockComponent={MarkdownBlock}>{content}</Streamdown>
       </article>
     </div>
   );

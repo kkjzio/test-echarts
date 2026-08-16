@@ -27,12 +27,10 @@ Some text`;
     expect(screen.getByTestId('echarts-block')).toHaveTextContent('{"title":{"text":"test"}}');
   });
 
-  it('renders pre/code for regular code blocks', () => {
+  it('renders regular code blocks', () => {
     const content = "```js\nconsole.log('hi')\n```";
     render(<PreviewPanel content={content} />);
-    const code = screen.getByText("console.log('hi')");
-    expect(code.tagName).toBe('CODE');
-    expect(code.parentElement?.tagName).toBe('PRE');
+    expect(screen.getByText("console.log('hi')")).toBeInTheDocument();
   });
 
   it('renders inline code without pre wrapper', () => {
