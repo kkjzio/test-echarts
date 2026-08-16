@@ -1,24 +1,14 @@
-import { Streamdown, Block, type BlockProps } from 'streamdown';
-import { EChartsBlock } from './EChartsBlock';
+import { Streamdown } from 'streamdown';
+import { EChartsRenderer } from './EChartsRenderer';
+
+const plugins = {
+  renderers: [
+    { language: 'echarts', component: EChartsRenderer },
+  ],
+};
 
 interface PreviewPanelProps {
   content: string;
-}
-
-// Matches a block that is exactly one ```echarts fence and captures the JSON body.
-const ECHARTS_BLOCK_RE = /^```echarts\s*\n?([\s\S]*?)\n?```\s*$/;
-
-function MarkdownBlock(props: BlockProps) {
-  if (props.isIncomplete) {
-    return <Block {...props} />;
-  }
-
-  const match = ECHARTS_BLOCK_RE.exec(props.content.trim());
-  if (match) {
-    return <EChartsBlock code={match[1].trim()} />;
-  }
-
-  return <Block {...props} />;
 }
 
 export function PreviewPanel({ content }: PreviewPanelProps) {
@@ -33,7 +23,10 @@ export function PreviewPanel({ content }: PreviewPanelProps) {
   return (
     <div className="h-full overflow-auto bg-white p-6">
       <article className="prose prose-slate max-w-none">
-        <Streamdown BlockComponent={MarkdownBlock}>{content}</Streamdown>
+        {/* key={content} 会让整个预览区在点击“渲染”时重新挂载,正式使用时请移除 */}
+        <Streamdown key={content} plugins={plugins}>
+          {content}
+        </Streamdown>
       </article>
     </div>
   );

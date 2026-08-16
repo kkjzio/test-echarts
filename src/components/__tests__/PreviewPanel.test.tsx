@@ -27,6 +27,15 @@ Some text`;
     expect(screen.getByTestId('echarts-block')).toHaveTextContent('{"title":{"text":"test"}}');
   });
 
+  it('updates EChartsBlock when echarts code block content changes', () => {
+    const initialContent = "```echarts\n{\"title\":{\"text\":\"old\"}}\n```";
+    const updatedContent = "```echarts\n{\"title\":{\"text\":\"new\"}}\n```";
+    const { rerender } = render(<PreviewPanel content={initialContent} />);
+    expect(screen.getByTestId('echarts-block')).toHaveTextContent('{"title":{"text":"old"}}');
+    rerender(<PreviewPanel content={updatedContent} />);
+    expect(screen.getByTestId('echarts-block')).toHaveTextContent('{"title":{"text":"new"}}');
+  });
+
   it('renders regular code blocks', () => {
     const content = "```js\nconsole.log('hi')\n```";
     render(<PreviewPanel content={content} />);
